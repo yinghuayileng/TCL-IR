@@ -1,0 +1,36 @@
+name: Compile ESPHome Firmware
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ESPHome
+        run: |
+          pip install esphome
+
+      - name: Compile Firmware
+        run: |
+          esphome compile main.yaml
+          # 新增：创建一个公开目录并将编译出来的所有 bin 固件提取出来
+          mkdir -p output
+          find .esphome/ -name "*.bin" -exec cp {} output/ \;
+
+      - name: Upload Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: tcl-ir-firmware
+          path: output/*.bin
