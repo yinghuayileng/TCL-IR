@@ -1,1 +1,4 @@
-
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 加上这一行，之后三点菜单就会出现Run workflow
